@@ -391,9 +391,6 @@ const HomeFeedView = () => {
                           <span>File: {selectedFile.name}</span>
                           <span>{Math.round(selectedFile.size / 1024)}KB</span>
                         </div>
-                        <div className="text-blue-600 mt-1">
-                          Will be uploaded when you click "Share Post"
-                        </div>
                       </div>
                     )}
                   </div>
