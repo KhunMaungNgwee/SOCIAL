@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -27,7 +27,7 @@ const RegisterSchema = z
     name: z.string().min(2, "Username is required"),
     email: z.string().email("Invalid email"),
     password: z.string().min(4, "Password must be at least 4 characters"),
-    confirmPassword: z.string().min(4),
+    confirmPassword: z.string().min(4, "Please confirm your password"),
     profilePictureUrl: z.string().url("Invalid URL"),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -61,16 +61,16 @@ const LoginView = () => {
     shouldUnregister: true,
   });
 
-  const password = form.watch("password");
+  // const password = form.watch("password");
 
-  useEffect(() => {
-    if (isRegister && password) {
-      form.setValue("confirmPassword", password, {
-        shouldValidate: true,
-        shouldTouch: false,
-      });
-    }
-  }, [password, form, isRegister]);
+  // useEffect(() => {
+  //   if (isRegister && password) {
+  //     form.setValue("confirmPassword", password, {
+  //       shouldValidate: true,
+  //       shouldTouch: false,
+  //     });
+  //   }
+  // }, [password, form, isRegister]);
 
   const { mutate: loginUser } = useLoginMutation({
     onMutate: () => setIsLoading(true),
@@ -152,9 +152,6 @@ const LoginView = () => {
   });
 
   const onSubmit = (data: FormValues) => {
-    console.log("Form submitted:", data);
-    console.log("Form errors:", form.formState.errors); // Add this
-    console.log("Is form valid?", form.formState.isValid); // Add this
     if (isRegister) {
       if (!data.name || !data.profilePictureUrl) {
         toast({
@@ -169,7 +166,7 @@ const LoginView = () => {
         email: data.email,
         password: data.password,
         profilePictureUrl: data.profilePictureUrl,
-        confirmPassword: data.password,
+        confirmPassword: data.confirmPassword,
       };
       registerUser(formData);
     } else {
@@ -272,11 +269,28 @@ const LoginView = () => {
                 </FormItem>
               )}
             />
+              
 
             {isRegister && (
               <>
-                {/* Hidden confirmPassword field - auto-filled by useEffect */}
-                <input type="hidden" {...form.register("confirmPassword")} />
+                <FormField
+                  control={form.control}
+                  name="confirmPassword"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Confirm Password</FormLabel>
+                      <FormControl>
+                            <Input
+                      type="confirmPassword"
+                      placeholder="confirmPassword"
+                      disabled={isLoading}
+                      {...field}
+                    />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
                 <FormField
                   control={form.control}
