@@ -1,4 +1,4 @@
-import {  useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -58,10 +58,19 @@ const LoginView = () => {
       name: "",
       profilePictureUrl: "",
     },
-    shouldUnregister: true,
+    // shouldUnregister: true,
+  });
+  // const password = form.watch("password");
+useEffect(() => {
+  form.reset(form.getValues(), {
+    keepValues: true,
   });
 
-  // const password = form.watch("password");
+  form.reset(
+    form.getValues(),
+    { keepErrors: false }
+  );
+}, [isRegister]);
 
   // useEffect(() => {
   //   if (isRegister && password) {
@@ -232,7 +241,12 @@ const LoginView = () => {
         </div>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          {/* <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+           */}
+          <form
+            key={isRegister ? "registerForm" : "loginForm"}
+            onSubmit={form.handleSubmit(onSubmit)}
+          >
             <FormField
               control={form.control}
               name="email"
@@ -269,7 +283,6 @@ const LoginView = () => {
                 </FormItem>
               )}
             />
-              
 
             {isRegister && (
               <>
@@ -280,12 +293,12 @@ const LoginView = () => {
                     <FormItem>
                       <FormLabel>Confirm Password</FormLabel>
                       <FormControl>
-                            <Input
-                      type="confirmPassword"
-                      placeholder="confirmPassword"
-                      disabled={isLoading}
-                      {...field}
-                    />
+                        <Input
+                          type="password"
+                          placeholder="Confirm Password"
+                          disabled={isLoading}
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -329,7 +342,7 @@ const LoginView = () => {
                 />
               </>
             )}
-
+            <br />
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading
                 ? isRegister
